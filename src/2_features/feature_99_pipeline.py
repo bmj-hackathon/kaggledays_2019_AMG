@@ -21,8 +21,9 @@ pipeline = make_pipeline(
 
 )
 
+#%%
 res = pipeline.fit_transform(X_train1, y_train1)
-
+#%%
 selector = sklearn.feature_selection.SelectFromModel(RandomForestRegressor(n_estimators=100))
 res2 = selector.fit_transform(res)
 
