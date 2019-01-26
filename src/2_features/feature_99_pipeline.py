@@ -1,12 +1,13 @@
 dfs_monthly_list = dfs_monthly_list
 #%%
-float_cols.remove('target')
-float_cols.remove('dataset_type')
+if 'target' in float_cols: float_cols.remove('target')
+if 'dataset_type' in float_cols: float_cols.remove('dataset_type')
 assert 'target' not in float_cols
 assert 'dataset_type' not in float_cols
 
-categorical_cols.remove('target')
-categorical_cols.remove('dataset_type')
+
+if 'target' in categorical_cols: categorical_cols.remove('target')
+if 'dataset_type' in categorical_cols: categorical_cols.remove('dataset_type')
 assert 'target' not in categorical_cols
 assert 'dataset_type' not in categorical_cols
 # %% {"_uuid": "66bd00938a631cb806de3f1ade45ddd25a0119ec"}
