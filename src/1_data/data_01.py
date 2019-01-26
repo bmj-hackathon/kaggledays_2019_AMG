@@ -5,20 +5,23 @@
 # %% [markdown]
 # # Currency and social columns
 # %%
-currency_and_social_columns = sales.columns[9:].tolist()
+currency_and_social_columns = df_sales.columns[9:].tolist()
 print(currency_and_social_columns)
+logging.info("{} currency_and_social_columns columns".format(len( currency_and_social_columns )))
 
 # %%
-first_day = sales.loc[sales.Date == 'Day_1',:]
+first_day = df_sales.loc[df_sales.Date == 'Day_1', :]
 # print(first_day)
 
 # %%
-all_currency_and_social = sales.groupby('sku_hash').mean()[currency_and_social_columns]
+
+#
+all_currency_and_social = df_sales.groupby('sku_hash').mean()[currency_and_social_columns]
 first_day_currency_and_social = first_day.groupby('sku_hash').mean()[currency_and_social_columns]
 first_day_currency_and_social.columns = ['first_day_' + col for col in first_day_currency_and_social.columns]
 
 # %%
-all_sales = sales.groupby('sku_hash').sum()['sales_quantity']
+all_sales = df_sales.groupby('sku_hash').sum()['sales_quantity']
 all_sales = pd.DataFrame(all_sales)
 first_day_sales = first_day.groupby(['sku_hash', 'day_transaction_date', 'Month_transaction']).sum()['sales_quantity']
 first_day_sales = pd.DataFrame(first_day_sales)

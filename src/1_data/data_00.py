@@ -78,7 +78,7 @@ df_navigation.loc[df_navigation.website_version_zone_number.isna(), 'website_ver
 df_navigation.loc[df_navigation.website_version_country_number.isna(), 'website_version_country_number'] = 'unknown'
 # %%
 color_null_count = df_all.color.isnull().sum(axis=0)
-logging.info("Filling {} colors".format(color_null_count))
 # Impute missing colors
-df_all.loc[df_train.color.isna(), 'color'] = 'unknown'
+df_all.loc[df_all.color.isna(), 'color'] = 'unknown'
+logging.info("Filled {} colors".format(color_null_count))
 
