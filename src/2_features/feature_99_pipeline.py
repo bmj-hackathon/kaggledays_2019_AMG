@@ -56,8 +56,23 @@ for i in range(1,2):
 
     dfs_monthly_list[i]['y_te'] = grid_search_list[i].predict(dfs_monthly_list[i]['X_te'])
 
-    print('metric cv: ', np.round(np.sqrt(grid_search_list[i].best_score_), 4))
+    dfs_monthly_list[i]['y_tr_pred'] = grid_search_list[i].predict(dfs_monthly_list[i]['X_tr'])
 
-    print('metric train: ', np.round(np.sqrt(mean_squared_error(dfs_monthly_list[i]['y_tr'], grid_search_list[i].predict(dfs_monthly_list[i]['X_tr']))), 4))
+    this_y_tr_pred = pd.Series(dfs_monthly_list[i]['y_tr_pred'])
+    this_y_tr = dfs_monthly_list[i]['y_tr']
+    this_y_tr = this_y_tr.iloc[:,0]
+    # compare = pd.DataFrame([dfs_monthly_list[i]['y_tr'],dfs_monthly_list[i]['y_tr']])
+    dfs_monthly_list[i]['compare'] = pd.DataFrame.from_records(
+        {'y_tr': this_y_tr,
+         'y_tr_pred': this_y_tr_pred}
+    ).reset_index()
+
+    print('metric cv: ', np.round(np.sqrt(grid_search_list[i].best_score_), 4))
+    print('metric train: ', np.round(np.sqrt(mean_squared_error(this_y_tr, this_y_tr_pred))), 4)
+
+    print('metric train: ', np.round(np.sqrt(mean_squared_error(this_y_tr, this_y_tr_pred)), 4))
     print('params: ', grid_search_list[i].best_params_)
+
+# print('metric train: ', np.round(np.sqrt(mean_squared_error(y_train2, gs.predict(X_train2))),4))
+# df
 

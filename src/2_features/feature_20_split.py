@@ -35,6 +35,9 @@ for i in range(1, 4):
     dfs_monthly_list[i]['y_tr'] = pd.DataFrame(dfs_monthly_list[i]['df_tr']['target'])
     log_df(dfs_monthly_list[i]['y_tr'] , 'y_tr ' + str(i))
 
+    logging.info("Applying log transform".format())
+    dfs_monthly_list[i]['y_tr']['target'] = (dfs_monthly_list[i]['y_tr']['target'] + 1).apply(np.log)
+
     # Test df
     dfs_monthly_list[i]['df_te'] = df[df['dataset_type'] == 'test'].copy()
     dfs_monthly_list[i]['df_te'].drop('dataset_type', axis=1, inplace=True)
@@ -45,3 +48,4 @@ for i in range(1, 4):
     log_df(dfs_monthly_list[i]['X_te'], 'X_te ' + str(i))
 
 
+a = dfs_monthly_list[i]['y_tr']
