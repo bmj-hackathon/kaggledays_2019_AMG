@@ -54,8 +54,10 @@ for i in range(1,2):
 
     grid_search_list[i].fit(dfs_monthly_list[i]['X_tr'], dfs_monthly_list[i]['y_tr'])
 
-    dfs_monthly_list[i]['y_te'] = grid_search_list[i].predict(dfs_monthly_list[i]['y_te'])
+    dfs_monthly_list[i]['y_te'] = grid_search_list[i].predict(dfs_monthly_list[i]['X_te'])
 
-    print('metric cv: ', np.round(np.sqrt(gs.best_score_), 4))
-    print('metric train: ', np.round(np.sqrt(mean_squared_error(y_train1, gs.predict(X_train1))), 4))
-    print('params: ', gs.best_params_)
+    print('metric cv: ', np.round(np.sqrt(grid_search_list[i].best_score_), 4))
+
+    print('metric train: ', np.round(np.sqrt(mean_squared_error(dfs_monthly_list[i]['y_tr'], grid_search_list[i].predict(dfs_monthly_list[i]['X_tr']))), 4))
+    print('params: ', grid_search_list[i].best_params_)
+
