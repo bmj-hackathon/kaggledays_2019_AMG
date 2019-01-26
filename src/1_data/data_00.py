@@ -31,7 +31,7 @@ df_all = pd.concat([df_train, df_test], sort=False)
 index_col = 'ID'
 df_all.set_index(index_col, inplace=True)
 
-logging.info("Merged dataset on {}, with origin column 'dataset_type', shape: {}".format(index_col, df_all.shape))
+logging.info("Concatenated dataset on {}, with origin column 'dataset_type', shape: {}".format(index_col, df_all.shape))
 del df_train, df_test, index_col
 
 
