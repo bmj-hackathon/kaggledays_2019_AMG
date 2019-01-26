@@ -46,7 +46,7 @@ params = {'decisiontreeregressor__min_samples_split': [40, 60, 80],
 
 grid_search_list = dict()
 
-for i in range(1,2):
+for i in range(1,4):
     logging.info('Month {}'.format(i))
     grid_search_list[i] = None
 
@@ -66,13 +66,9 @@ for i in range(1,2):
         {'y_tr': this_y_tr,
          'y_tr_pred': this_y_tr_pred}
     ).reset_index()
+    logging.info('metric cv: {}'.format( np.round(np.sqrt(grid_search_list[i].best_score_), 4)))
+    logging.info('metric train: {}'.format(np.round(np.sqrt(mean_squared_error(this_y_tr, this_y_tr_pred)), 4)))
+    logging.info('params: {}'.format(grid_search_list[i].best_params_))
 
-    print('metric cv: ', np.round(np.sqrt(grid_search_list[i].best_score_), 4))
-    print('metric train: ', np.round(np.sqrt(mean_squared_error(this_y_tr, this_y_tr_pred))), 4)
 
-    print('metric train: ', np.round(np.sqrt(mean_squared_error(this_y_tr, this_y_tr_pred)), 4))
-    print('params: ', grid_search_list[i].best_params_)
-
-# print('metric train: ', np.round(np.sqrt(mean_squared_error(y_train2, gs.predict(X_train2))),4))
-# df
 

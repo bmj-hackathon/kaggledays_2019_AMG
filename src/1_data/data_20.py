@@ -24,6 +24,18 @@ def log_df(df,name):
     logging.info("DataFrame {} {}".format(name,df.shape))
 log_df(df_all,'df_all')
 
+# %% INJECT NEW SALES TIME TREND FEATURE
+
+trend_columns = ['BuzzPost', 'Buzz_', 'NetSent', 'Positive', 'Negative', 'Impressions']
+
+for feature_col in trend_columns:
+    extracted = extract_sentiment_lin_reg_coefficients(df_sales,feature_col)
+    df_sales = df_sales.merge(extracted,on='sku_hash')
+    logging.info("Appended {}".format(feature_col))
+    log_df(df_sales, 'df_sales')
+
+
+
 #%%
 logging.info("SALES DATA".format())
 
@@ -69,6 +81,9 @@ logging.info("Merged df_all_currency_and_social {} = {}".format(df_sales_data.sh
 df_sales_data = pd.merge(df_sales_data, df_first_day_currency_and_social, left_index=True, right_index=True)
 logging.info("Merged df_first_day_currency_and_social {} {} = {}".format(df_first_day_currency_and_social.shape, df_first_day_sales.shape, df_sales_data.shape))
 log_df(df_sales_data,'df_sales_data')
+
+
+
 
 # %%
 monthDict = {1:'Jan', 2:'Feb', 3:'Mar', 4:'Apr', 5:'May', 6:'Jun', 7:'Jul', 8:'Aug', 9:'Sep', 10:'Oct', 11:'Nov', 12:'Dec'}
