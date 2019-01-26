@@ -27,26 +27,21 @@ for i in range(1, 4):
     dfs_monthly_list[i]['df_tr'].drop('dataset_type', axis=1, inplace=True)
     log_df(dfs_monthly_list[i]['df_tr'], 'df_tr ' + str(i))
 
+    # X_tr
+    dfs_monthly_list[i]['X_tr'] = dfs_monthly_list[i]['df_tr'].drop('target', axis=1)
+    log_df(dfs_monthly_list[i]['X_tr'], 'X_tr ' + str(i))
+
+    # y_tr
+    dfs_monthly_list[i]['y_tr'] = pd.DataFrame(dfs_monthly_list[i]['df_tr']['target'])
+    log_df(dfs_monthly_list[i]['y_tr'] , 'y_tr ' + str(i))
+
     # Test df
     dfs_monthly_list[i]['df_te'] = df[df['dataset_type'] == 'test'].copy()
     dfs_monthly_list[i]['df_te'].drop('dataset_type', axis=1, inplace=True)
     log_df(dfs_monthly_list[i]['df_te'], 'df_te ' + str(i))
 
-y_tr = df_tr['AdoptionSpeed']
-logging.info("y_tr {}".format(y_tr.shape))
-
-X_tr = df_tr.drop(['AdoptionSpeed'], axis=1)
-logging.info("X_tr {}".format(X_tr.shape))
-
-X_te = df_te.drop(['AdoptionSpeed'], axis=1)
-logging.info("X_te {}".format(X_te.shape))
-
-# a = dfs_monthly_list[i]
-# b = df_all_merged.columns
-
-# %%
-
-y_train1 = (train_data1.target + 1).apply(np.log)
-X_train1 = train_data1.drop('target', axis=1)
+    # X_te
+    dfs_monthly_list[i]['X_te'] = dfs_monthly_list[i]['df_te'].drop('target', axis=1)
+    log_df(dfs_monthly_list[i]['X_te'], 'X_te ' + str(i))
 
 

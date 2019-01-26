@@ -21,14 +21,17 @@ def timeit(method):
 
 class PandasSelector(BaseEstimator, TransformerMixin):
     def __init__(self, columns=None, dtype=None, inverse=False,
-                 return_vector=True):
+                 return_vector=True, name=None):
         self.dtype = dtype
         self.columns = columns
         self.inverse = inverse
         self.return_vector = return_vector
+        self.name = name
 
         if isinstance(self.columns, str):
             self.columns = [self.columns]
+
+        logging.info("Init {} on cols: {}".format(name, columns))
 
     def check_condition(self, x, col):
         cond = (self.dtype is not None and x[col].dtype == self.dtype) or \
@@ -43,13 +46,13 @@ class PandasSelector(BaseEstimator, TransformerMixin):
             missing_columns = set(self.columns) - set(x.columns)
             if len(missing_columns) > 0:
                 missing_columns_ = ','.join(col for col in missing_columns)
-                raise KeyError('Keys are missing in the record: %s' %
-                               missing_columns_)
+                raise KeyError("Keys are missing in the record: {}, columns required:{}".format( missing_columns_, self.columns))
 
     def transform(self, x):
+        logging.info("{} is transforming...".format(self.name))
         # check if x is a pandas DataFrame
         if not isinstance(x, pd.DataFrame):
-            raise KeyError('Input is not a pandas DataFrame')
+            raise KeyError("Input is not a pandas DataFrame it's a {}".format(type(x)))
 
         selected_cols = []
         for col in x.columns:
