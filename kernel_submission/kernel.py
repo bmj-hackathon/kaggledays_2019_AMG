@@ -968,5 +968,27 @@ for i in range(1,4):
     logging.info('metric train: {}'.format(np.round(np.sqrt(mean_squared_error(this_y_tr, this_y_tr_pred)), 4)))
     logging.info('params: {}'.format(grid_search_list[i].best_params_))
 
+#%% SUBMISSION
+
+# %% {"_uuid": "4d9d4dc8361c4dc285d2283bd58cd7465a0b0e61"}
+for i in range(1,4):
+    logging.info('Month {}'.format(i))
+    grid_search_list[i]
+    dfs_monthly_list[i]['y_submit'] = (pd.Series(dfs_monthly_list[i]['y_te'])).apply(np.exp)  - 1
+    a = dfs_monthly_list[i]['df']
+
+    dfs_monthly_list[i]['y_submit'].index = dfs_monthly_list[i]['X_te'].index
+
+submission = pd.DataFrame(pd.concat([dfs_monthly_list[1]['y_submit'],
+                                     dfs_monthly_list[2]['y_submit'],
+                                     dfs_monthly_list[3]['y_submit']]))
+
+submission.index = df_all[df_all['dataset_type'] == 'test'].copy().index
+submission.columns = ['target']
+
+
+# %% {"_uuid": "e886a8013dcef7729789dffdbe5bb32270934c5b"}
+submission.describe()
+submission.to_csv('submission.csv', index_label='ID')
 
 

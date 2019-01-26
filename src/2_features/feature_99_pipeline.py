@@ -10,6 +10,7 @@ if 'target' in categorical_cols: categorical_cols.remove('target')
 if 'dataset_type' in categorical_cols: categorical_cols.remove('dataset_type')
 assert 'target' not in categorical_cols
 assert 'dataset_type' not in categorical_cols
+
 # %% {"_uuid": "66bd00938a631cb806de3f1ade45ddd25a0119ec"}
 my_sales_cols =['sales_quantity_log', 'first_day_sales_log', 'sales_quantity', 'first_day_sales']
 pipeline = make_pipeline(
@@ -23,27 +24,49 @@ pipeline = make_pipeline(
             CountVectorizer() ),
         make_pipeline(
             PandasSelector(columns=images_cols,name='Images_cols'),
-            PCA(10)),
+            PCA(5)),
         make_pipeline(
             PandasSelector(columns=float_cols, name='Floats'),
-            PCA(10)),
+            PCA(5)),
         make_pipeline(
             PandasSelector(columns=my_sales_cols,name='Sales stuff')),
         make_pipeline(
             PandasSelector(columns=categorical_cols, name ='Categoricals'),
             OneHotEncoder(handle_unknown='ignore'),
-            LatentDirichletAllocation(n_components=10))
+        )
+            # LatentDirichletAllocation(n_components=10))
     ),
-    SelectFromModel(RandomForestRegressor(n_estimators=100)),
-    DecisionTreeRegressor(),
+    # SelectFromModel(RandomForestRegressor(n_estimators=100)),
+    # xgb.XGBRegressor(),
 )
+
+
+
+#%%
+# Transform DATA
+#%%
+pipeline
+for step in pipeline.steps:
+    print(step)
+
+for i in range(1,4):
+    logging.info("Transforming month {}".format(i))
+    dfs_monthly_list[i]['arr_transformed'] = pipeline.fit_transform(dfs_monthly_list[i]['X_tr'])
 
 
 #%%
 
-params = {'decisiontreeregressor__min_samples_split': [40, 60, 80],
-          'decisiontreeregressor__max_depth': [4, 6, 8]}
+#%%
+# params = {'decisiontreeregressor__min_samples_split': [40, 60, 80],
+#           'decisiontreeregressor__max_depth': [4, 6, 8]}
 
+params = {
+       'xgbregressor__min_child_weight': [5, 15,30],
+       'xgbregressor__gamma': [0.1,0.5, 1],
+       'xgbregressor__subsample': [0.8, 1.0],
+       'xgbregressor__colsample_bytree': [0.5,0.8, 1.0],
+       'xgbregressor__max_depth': [5,10, 30]
+       }
 
 grid_search_list = dict()
 
@@ -71,5 +94,27 @@ for i in range(1,4):
     logging.info('metric train: {}'.format(np.round(np.sqrt(mean_squared_error(this_y_tr, this_y_tr_pred)), 4)))
     logging.info('params: {}'.format(grid_search_list[i].best_params_))
 
+#%% SUBMISSION
+
+# %% {"_uuid": "4d9d4dc8361c4dc285d2283bd58cd7465a0b0e61"}
+for i in range(1,4):
+    logging.info('Month {}'.format(i))
+    grid_search_list[i]
+    dfs_monthly_list[i]['y_submit'] = (pd.Series(dfs_monthly_list[i]['y_te'])).apply(np.exp)  - 1
+    a = dfs_monthly_list[i]['df']
+
+    dfs_monthly_list[i]['y_submit'].index = dfs_monthly_list[i]['X_te'].index
+
+submission = pd.DataFrame(pd.concat([dfs_monthly_list[1]['y_submit'],
+                                     dfs_monthly_list[2]['y_submit'],
+                                     dfs_monthly_list[3]['y_submit']]))
+
+submission.index = df_all[df_all['dataset_type'] == 'test'].copy().index
+submission.columns = ['target']
+
+
+# %% {"_uuid": "e886a8013dcef7729789dffdbe5bb32270934c5b"}
+submission.describe()
+submission.to_csv('submission.csv', index_label='ID')
 
 
