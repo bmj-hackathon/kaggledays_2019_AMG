@@ -36,7 +36,7 @@ pipeline = make_pipeline(
         )
             # LatentDirichletAllocation(n_components=10))
     ),
-    # SelectFromModel(RandomForestRegressor(n_estimators=100)),
+    # sk.feature_selection.SelectFromModel(RandomForestRegressor(n_estimators=100)),
     # xgb.XGBRegressor(),
 )
 
@@ -52,6 +52,28 @@ for step in pipeline.steps:
 for i in range(1,4):
     logging.info("Transforming month {}".format(i))
     dfs_monthly_list[i]['arr_transformed'] = pipeline.fit_transform(dfs_monthly_list[i]['X_tr'])
+    logging.info("Transformed to array {}".format(dfs_monthly_list[i]['arr_transformed'].shape))
+
+    dfs_monthly_list[i]['arr_transformed']
+
+#%%
+months = range(1,2)
+for i in months:
+    selector = sk.feature_selection.SelectFromModel(RandomForestRegressor(n_estimators=100))
+    selector.fit(dfs_monthly_list[i]['arr_transformed'], dfs_monthly_list[i]['y_tr'].values.ravel())
+
+    dfs_monthly_list[i]['arr_selected'] = selector.transform(dfs_monthly_list[i]['arr_transformed'])
+    n_features = dfs_monthly_list[i]['arr_selected']
+    logging.info("n_features {}".format(n_features.shape[1]))
+
+    # n_features = sfm.transform(X).shape[1]
+    # selector.fit_transform()
+
+for i in months:
+    pass
+
+
+
 
 
 #%%
