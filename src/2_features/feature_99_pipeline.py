@@ -45,35 +45,61 @@ pipeline = make_pipeline(
 #%%
 # Transform DATA
 #%%
-pipeline
+months = range(1,2)
 for step in pipeline.steps:
     print(step)
 
-for i in range(1,4):
+for i in months:
     logging.info("Transforming month {}".format(i))
-    dfs_monthly_list[i]['arr_transformed'] = pipeline.fit_transform(dfs_monthly_list[i]['X_tr'])
+    dfs_monthly_list[i]['arr_transformed_tr'] = pipeline.fit_transform(dfs_monthly_list[i]['X_tr'])
+    dfs_monthly_list[i]['arr_transformed_te'] = pipeline.fit_transform(dfs_monthly_list[i]['X_te'])
     logging.info("Transformed to array {}".format(dfs_monthly_list[i]['arr_transformed'].shape))
 
-    dfs_monthly_list[i]['arr_transformed']
+    # dfs_monthly_list[i]['arr_transformed']
 
 #%%
-months = range(1,2)
+# SELECT
+
 for i in months:
     selector = sk.feature_selection.SelectFromModel(RandomForestRegressor(n_estimators=100))
-    selector.fit(dfs_monthly_list[i]['arr_transformed'], dfs_monthly_list[i]['y_tr'].values.ravel())
+    selector.fit(dfs_monthly_list[i]['arr_transformed_tr'], dfs_monthly_list[i]['y_tr'].values.ravel())
 
-    dfs_monthly_list[i]['arr_selected'] = selector.transform(dfs_monthly_list[i]['arr_transformed'])
+    dfs_monthly_list[i]['arr_selected_tr'] = selector.transform(dfs_monthly_list[i]['arr_transformed'])
+    dfs_monthly_list[i]['arr_selected_te'] = selector.transform(dfs_monthly_list[i]['arr_transformed'])
     n_features = dfs_monthly_list[i]['arr_selected']
     logging.info("n_features {}".format(n_features.shape[1]))
 
     # n_features = sfm.transform(X).shape[1]
     # selector.fit_transform()
 
+#%%
+# Classify
+params = {'decisiontreeregressor__min_samples_split': [40, 60, 80],
+          'decisiontreeregressor__max_depth': [4, 6, 8]}
+
 for i in months:
-    pass
+    model = DecisionTreeRegressor().fit(dfs_monthly_list[i]['arr_selected_tr'], dfs_monthly_list[i]['y_tr'].values.ravel())
 
 
+#%%
+# Predict
+for i in months:
+    dfs_monthly_list[i]['y_te'] = model.predict(dfs_monthly_list[i]['arr_selected_te'])
 
+
+#%% SUBMISSION
+
+for i in months:
+    logging.info('Month {}'.format(i))
+    # grid_search_list[i]
+    dfs_monthly_list[i]['y_submit'] = (pd.Series(dfs_monthly_list[i]['y_te'])).apply(np.exp)  - 1
+    a = dfs_monthly_list[i]['df']
+
+    dfs_monthly_list[i]['y_submit'].index = dfs_monthly_list[i]['X_te'].index
+
+submission = pd.DataFrame(pd.concat([dfs_monthly_list[1]['y_submit'],
+                                     dfs_monthly_list[2]['y_submit'],
+                                     dfs_monthly_list[3]['y_submit']]))
 
 
 #%%

@@ -248,7 +248,7 @@ model = make_pipeline(
                       OneHotEncoder(handle_unknown='ignore'),
                       LatentDirichletAllocation(n_components=10))
     ),
-    SelectFromModel(RandomForestRegressor(n_estimators=100)),
+    # SelectFromModel(RandomForestRegressor(n_estimators=100)),
     DecisionTreeRegressor()
 )
 
