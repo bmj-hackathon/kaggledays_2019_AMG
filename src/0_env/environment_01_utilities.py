@@ -39,6 +39,7 @@ class PandasSelector(BaseEstimator, TransformerMixin):
         self.return_vector = return_vector
         self.name = name
 
+        # Ensure columns in a list()
         if isinstance(self.columns, str):
             self.columns = [self.columns]
 
