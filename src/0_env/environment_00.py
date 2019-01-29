@@ -101,7 +101,7 @@ import sklearn.metrics
 import sklearn.linear_model
 import sklearn.pipeline
 import sklearn.model_selection
-
+# from sklearn.preprocessing import LabelEncoder
 from sklearn_pandas import DataFrameMapper
 
 # Models
@@ -144,5 +144,4 @@ from sklearn.ensemble import RandomForestRegressor
 from sklearn.feature_selection import SelectFromModel
 from sklearn.metrics import mean_squared_error
 from sklearn.tree import DecisionTreeRegressor
-
 warnings.simplefilter(action='ignore', category=FutureWarning)
